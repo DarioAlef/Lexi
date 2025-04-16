@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexi - Seu Assistente Jurídico Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'lexi-pink': '#FF66B2',
+                        'lexi-pink-dark': '#E64D98',
+                        'lexi-purple': '#9C64F4',
+                        'lexi-blue': '#66B3FF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fafafa;
+        }
+        
+        .chat-container {
+            height: calc(100vh - 160px);
+        }
+        
+        .message-enter {
+            animation: enter 0.3s ease-out;
+        }
+        
+        @keyframes enter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-lexi-pink to-lexi-purple shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center">
+                            <i class="fas fa-balance-scale text-white text-2xl mr-2"></i>
+                            <span class="text-white font-bold text-xl">Lexi</span>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#" class="text-white px-3 py-2 rounded-md text-sm font-medium">Início</a>
+                            <a href="#" class="text-white hover:bg-lexi-pink-dark px-3 py-2 rounded-md text-sm font-medium">Como Funciona</a>
+                            <a href="#" class="text-white hover:bg-lexi-pink-dark px-3 py-2 rounded-md text-sm font-medium">Recursos</a>
+                            <a href="#" class="text-white hover:bg-lexi-pink-dark px-3 py-2 rounded-md text-sm font-medium">Planos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button class="bg-white text-lexi-pink px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition duration-300">
+                            Entrar
+                        </button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white focus:outline-none">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Sidebar -->
+            <div class="w-full md:w-1/4 bg-white rounded-lg shadow-md p-6 h-fit">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Seus Documentos</h2>
+                
+                <div class="file-upload mb-6">
+                    <button class="w-full bg-lexi-pink text-white py-2 px-4 rounded-md hover:bg-lexi-pink-dark transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-upload mr-2"></i> Enviar PDF
+                        <input type="file" accept=".pdf" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-700">Documentos Recentes</h3>
+                        <span class="text-xs text-gray-500">3/10</span>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                            <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                            <span class="text-sm truncate">Constituição Federal.pdf</span>
+                        </div>
+                        <div class="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                            <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                            <span class="text-sm truncate">Código Civil.pdf</span>
+                        </div>
+                        <div class="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer">
+                            <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                            <span class="text-sm truncate">Lei de Licitações.pdf</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">Histórico de Buscas</h3>
+                    <div class="space-y-1">
+                        <div class="text-sm text-gray-600 p-2 rounded hover:bg-gray-100 cursor-pointer truncate">O que é princípio da legalidade?</div>
+                        <div class="text-sm text-gray-600 p-2 rounded hover:bg-gray-100 cursor-pointer truncate">Diferença entre ação civil pública e ação popular</div>
+                        <div class="text-sm text-gray-600 p-2 rounded hover:bg-gray-100 cursor-pointer truncate">Art. 5º da Constituição Federal</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Area -->
+            <div class="w-full md:w-3/4 bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-4 border-b bg-gradient-to-r from-lexi-pink to-lexi-purple">
+                    <h2 class="text-xl font-semibold text-white">Assistente Jurídico Lexi</h2>
+                    <p class="text-sm text-white opacity-80">Baseado em IA especializada em Direito Brasileiro</p>
+                </div>
+                
+                <div class="chat-container overflow-y-auto p-4 scrollbar-hide" id="chat-messages">
+                    <!-- Welcome Message -->
+                    <div class="message-enter mb-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-lexi-pink text-white rounded-full p-2">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">Lexi</div>
+                                <div class="mt-1 text-sm text-gray-700 bg-gray-100 rounded-lg p-3">
+                                    <p>Olá! Sou o Lexi, seu assistente jurídico inteligente. Estou aqui para ajudar você com seus estudos para concursos públicos.</p>
+                                    <p class="mt-2">Você pode:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Fazer perguntas sobre leis e jurisprudência</li>
+                                        <li>Enviar PDFs para eu analisar</li>
+                                        <li>Consultar artigos específicos</li>
+                                        <li>Revisar conceitos importantes</li>
+                                    </ul>
+                                    <p class="mt-2">Como posso ajudar hoje?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample User Message -->
+                    <div class="message-enter mb-6">
+                        <div class="flex items-start justify-end">
+                            <div class="ml-3 text-right">
+                                <div class="text-sm font-medium text-gray-900">Você</div>
+                                <div class="mt-1 text-sm text-white bg-lexi-pink rounded-lg p-3 inline-block">
+                                    Qual é o conceito de princípio da legalidade?
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 bg-gray-300 text-gray-700 rounded-full p-2">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Bot Response -->
+                    <div class="message-enter mb-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-lexi-pink text-white rounded-full p-2">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">Lexi</div>
+                                <div class="mt-1 text-sm text-gray-700 bg-gray-100 rounded-lg p-3">
+                                    <p>O princípio da legalidade é um dos pilares do Estado de Direito e está previsto no art. 5º, II da Constituição Federal. Ele estabelece que:</p>
+                                    <p class="mt-2 font-medium">"Ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei."</p>
+                                    <p class="mt-2">Na esfera administrativa, o princípio da legalidade (art. 37, CF) significa que a Administração Pública só pode agir conforme autorizado por lei, ao contrário dos particulares que podem fazer tudo que a lei não proíbe.</p>
+                                    <div class="mt-3 p-2 bg-blue-50 rounded border-l-4 border-lexi-blue">
+                                        <p class="text-xs text-gray-600"><span class="font-medium">Fonte:</span> Constituição Federal, Art. 5º, II e Art. 37</p>
+                                    </div>
+                                </div>
+                                <div class="mt-2 flex space-x-2">
+                                    <button class="text-xs text-gray-500 hover:text-lexi-pink">
+                                        <i class="fas fa-thumbs-up"></i> Útil
+                                    </button>
+                                    <button class="text-xs text-gray-500 hover:text-lexi-pink">
+                                        <i class="fas fa-thumbs-down"></i> Não útil
+                                    </button>
+                                    <button class="text-xs text-gray-500 hover:text-lexi-pink">
+                                        <i class="fas fa-share"></i> Compartilhar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading Indicator (hidden by default) -->
+                    <div class="mb-6 hidden" id="loading-indicator">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-lexi-pink text-white rounded-full p-2">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">Lexi</div>
+                                <div class="mt-1 text-sm text-gray-700 bg-gray-100 rounded-lg p-3">
+                                    <div class="flex space-x-2">
+                                        <div class="w-2 h-2 rounded-full bg-lexi-pink pulse"></div>
+                                        <div class="w-2 h-2 rounded-full bg-lexi-pink pulse" style="animation-delay: 0.2s"></div>
+                                        <div class="w-2 h-2 rounded-full bg-lexi-pink pulse" style="animation-delay: 0.4s"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Input Area -->
+                <div class="border-t p-4 bg-gray-50">
+                    <form id="chat-form">
+                        <div class="flex items-center">
+                            <div class="flex-grow relative">
+                                <textarea 
+                                    id="message-input" 
+                                    rows="1" 
+                                    class="w-full border border-gray-300 rounded-full py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-lexi-pink focus:border-transparent resize-none" 
+                                    placeholder="Digite sua pergunta sobre Direito Brasileiro..."
+                                    style="min-height: 44px; max-height: 120px;"></textarea>
+                                <button type="button" class="absolute right-2 bottom-2 text-gray-400 hover:text-lexi-pink">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                            </div>
+                            <button type="submit" class="ml-2 bg-lexi-pink text-white rounded-full p-2 hover:bg-lexi-pink-dark transition duration-300">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500 flex justify-between">
+                            <span>Lexi pode cometer erros. Sempre verifique informações importantes.</span>
+                            <span id="char-count">0/500</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-gradient-to-b from-white to-gray-50 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Como o Lexi pode ajudar nos seus estudos
+                </h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                    Um assistente jurídico inteligente projetado para candidatos a concursos públicos
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-lexi-pink text-white mb-4">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Análise de Documentos</h3>
+                        <p class="text-gray-500">
+                            Envie PDFs de leis, doutrinas e jurisprudências. Lexi extrai e organiza o conteúdo para consultas rápidas.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-lexi-purple text-white mb-4">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Perguntas em Linguagem Natural</h3>
+                        <p class="text-gray-500">
+                            Faça perguntas como se estivesse conversando com um professor. Lexi entende o contexto jurídico.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                    <div class="p-6">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-lexi-blue text-white mb-4">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Revisão por Temas</h3>
+                        <p class="text-gray-500">
+                            Organize seus estudos por temas específicos. Lexi sugere questões relacionadas e materiais complementares.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-12 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Lexi</h3>
+                    <p class="text-gray-400 text-sm">
+                        Seu assistente jurídico inteligente para concursos públicos. Tecnologia de ponta em IA aplicada ao Direito Brasileiro.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Recursos</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white">Análise de PDFs</a></li>
+                        <li><a href="#" class="hover:text-white">Perguntas Jurídicas</a></li>
+                        <li><a href="#" class="hover:text-white">Histórico de Consultas</a></li>
+                        <li><a href="#" class="hover:text-white">Material de Apoio</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white">Termos de Uso</a></li>
+                        <li><a href="#" class="hover:text-white">Política de Privacidade</a></li>
+                        <li><a href="#" class="hover:text-white">Aviso Legal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contato</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2"></i> contato@lexi.com.br</li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-2"></i> (11) 98765-4321</li>
+                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> São Paulo, Brasil</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                    © 2023 Lexi. Todos os direitos reservados.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const charCount = document.getElementById('char-count');
+            
+            // Auto-resize textarea
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                
+                // Update character count
+                charCount.textContent = `${this.value.length}/500`;
+            });
+            
+            // Form submission
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const message = messageInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message to chat
+                addMessageToChat('user', message);
+                messageInput.value = '';
+                messageInput.style.height = '44px';
+                charCount.textContent = '0/500';
+                
+                // Show loading indicator
+                loadingIndicator.classList.remove('hidden');
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate bot response (in a real app, this would be an API call)
+                setTimeout(() => {
+                    loadingIndicator.classList.add('hidden');
+                    
+                    // Sample responses
+                    const sampleResponses = [
+                        "O princípio da legalidade está previsto no artigo 5º, II da Constituição Federal e estabelece que ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei.",
+                        "Na esfera administrativa, o princípio da legalidade (art. 37, CF) significa que a Administração Pública só pode agir conforme autorizado por lei.",
+                        "O princípio da legalidade é um dos pilares do Estado Democrático de Direito e está intimamente ligado ao conceito de segurança jurídica."
+                    ];
+                    
+                    const randomResponse = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
+                    
+                    addMessageToChat('bot', randomResponse);
+                    
+                    // Scroll to bottom after response
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1500);
+            });
+            
+            function addMessageToChat(sender, message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message-enter mb-6';
+                
+                if (sender === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start justify-end">
+                            <div class="ml-3 text-right">
+                                <div class="text-sm font-medium text-gray-900">Você</div>
+                                <div class="mt-1 text-sm text-white bg-lexi-pink rounded-lg p-3 inline-block">
+                                    ${message}
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 bg-gray-300 text-gray-700 rounded-full p-2">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-lexi-pink text-white rounded-full p-2">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">Lexi</div>
+                                <div class="mt-1 text-sm text-gray-700 bg-gray-100 rounded-lg p-3">
+                                    ${message}
+                                </div>
+                                <div class="mt-2 flex space-x-2">
+                                    <button class="text-xs text-gray-500 hover:text-lexi-pink">
+                                        <i class="fas fa-thumbs-up"></i> Útil
+                                    </button>
+                                    <button class="text-xs text-gray-500 hover:text-lexi-pink">
+                                        <i class="fas fa-thumbs-down"></i> Não útil
+                                    </button>
+                                    <button class="text-xs text-gray-500 hover:text-lexi-pink">
+                                        <i class="fas fa-share"></i> Compartilhar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.appendChild(messageDiv);
+            }
+            
+            // File upload button
+            const fileUpload = document.querySelector('.file-upload input');
+            fileUpload.addEventListener('change', function(e) {
+                if (this.files.length > 0) {
+                    // In a real app, you would upload the files here
+                    alert(`${this.files.length} arquivo(s) selecionado(s) para upload.`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
